@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The Commons</title>
+
+<style>
+
+body{
+background:black;
+color:#00ffcc;
+font-family:monospace;
+text-align:center;
+}
+
+#main{
+display:none;
+}
+
+textarea{
+width:80%;
+height:80px;
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+}
+
+button{
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+padding:8px;
+margin:5px;
+}
+
+.post{
+border:1px solid #00ffcc;
+margin:10px;
+padding:10px;
+}
+
+#chatbox{
+height:200px;
+overflow-y:scroll;
+border:1px solid #00ffcc;
+margin:10px;
+padding:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>THE COMMONS</h1>
+
+<div id="puzzle">
+
+<p>To enter the commons solve this:</p>
+
+<p>
+I speak without a mouth  
+I hear without ears  
+I have no body  
+But I come alive with wind  
+
+What am I?
+</p>
+
+<input id="answer">
+<button onclick="check()">Enter</button>
+
+</div>
+
+<div id="main">
+
+<audio autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2b8d6d63.mp3" type="audio/mpeg">
+</audio>
+
+<h2>Bulletin Board</h2>
+
+<textarea id="postText"></textarea><br>
+
+<button onclick="post()">Post</button>
+
+<div id="board"></div>
+
+<h2>Chat Room</h2>
+
+<div id="chatbox"></div>
+
+<input id="chatInput">
+<button onclick="send()">Send</button>
+
+</div>
+
+<script>
+
+function check(){
+
+let a=document.getElementById("answer").value.toLowerCase()
+
+if(a=="echo"){
+document.getElementById("puzzle").style.display="none"
+document.getElementById("main").style.display="block"
+}else{
+alert("Not quite.")
+}
+
+}
+
+function post(){
+
+let text=document.getElementById("postText").value
+
+let div=document.createElement("div")
+
+div.className="post"
+
+div.innerText=text
+
+document.getElementById("board").prepend(div)
+
+document.getElementById("postText").value=""
+
+}
+
+function send(){
+
+let msg=document.getElementById("chatInput").value
+
+let div=document.createElement("div")
+
+div.innerText="Anon: "+msg
+
+document.getElementById("chatbox").appendChild(div)
+
+document.getElementById("chatInput").value=""
+
+}
+
+</script>
+
+</body>
+</html>
