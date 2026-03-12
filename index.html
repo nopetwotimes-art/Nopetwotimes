@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>The Commons - Simple Version</title>
+<title>The Commons - Interactive Rooms</title>
 <style>
 body{
-  margin:20px;
+  margin:0;
   background:black;
   color:#00ffcc;
   font-family:monospace;
+  overflow:hidden;
   text-align:center;
 }
-input, button, textarea{
-  margin:5px;
-  padding:5px;
+.room{
+  display:none;
+  width:100%;
+  height:100vh;
+  padding-top:40px;
+}
+button, input, textarea{
   background:black;
   color:#00ffcc;
   border:1px solid #00ffcc;
+  margin:5px;
+  padding:5px;
+  cursor:pointer;
 }
-#main, #secret, #treasure{display:none;}
+#position{
+  position:fixed;
+  top:5px;
+  left:5px;
+  font-size:14px;
+}
 #chatbox{
   height:100px;
   overflow-y:scroll;
@@ -29,61 +42,97 @@ input, button, textarea{
 </head>
 <body>
 
-<h1>THE COMMONS (Simple Version)</h1>
+<div id="position">Room: (0,0)</div>
 
-<!-- First Puzzle -->
-<div id="puzzle">
-  <p>Solve the riddle to enter:</p>
-  <p>
-    I speak without a mouth<br>
-    I hear without ears<br>
-    I have no body<br>
-    But I come alive with wind
-  </p>
+<!-- Rooms -->
+<div id="room-0-0" class="room">
+  <h1>Entrance Room</h1>
+  <p>Solve the riddle to start:</p>
+  <p>I speak without a mouth<br>I hear without ears<br>I have no body<br>But I come alive with wind</p>
   <input id="answer">
   <button onclick="checkPuzzle()">Enter</button>
 </div>
 
-<!-- Main Area -->
-<div id="main">
-  <h3 id="anon"></h3>
-
-  <h2>Bulletin Board</h2>
-  <textarea id="postText"></textarea><br>
+<div id="room-0-1" class="room">
+  <h1>Library Room</h1>
+  <p>Bulletin board:</p>
+  <textarea id="boardText"></textarea><br>
   <button onclick="postMessage()">Post</button>
   <div id="board"></div>
+</div>
 
-  <h2>Chat</h2>
+<div id="room-1-0" class="room">
+  <h1>Chat Room</h1>
   <div id="chatbox"></div>
   <input id="chatInput">
   <button onclick="sendMessage()">Send</button>
-
-  <br><br>
-  <button onclick="showSecret()">Search for hidden room</button>
 </div>
 
-<!-- Secret Room -->
-<div id="secret">
-  <h2>Secret Room</h2>
+<div id="room-1-1" class="room">
+  <h1>Secret Room</h1>
   <p>What gets wetter the more it dries?</p>
   <input id="secretAnswer">
   <button onclick="unlockSecret()">Unlock</button>
-  <div id="treasure">
-    <p>🎉 Congratulations! You found the secret.</p>
+  <div id="treasure" style="display:none">
+    <p>🎉 Congratulations! Hidden treasure found.</p>
   </div>
 </div>
 
 <script>
+// Grid navigation
+let x=0, y=0;
+let rooms=[['room-0-0','room-0-1'],['room-1-0','room-1-1']];
+let firstPuzzleSolved=false;
+
+function showRoom(x,y){
+  document.querySelectorAll('.room').forEach(r=>r.style.display='none');
+  document.getElementById(rooms[x][y]).style.display='block';
+  document.getElementById('position').innerText='Room: ('+x+','+y+')';
+}
+
+// Initial room
+showRoom(x,y);
+
+// Arrow key navigation locked until first puzzle solved
+document.addEventListener('keydown', e=>{
+  if(!firstPuzzleSolved) return;
+  if(e.key==='ArrowUp' && x>0) x--;
+  if(e.key==='ArrowDown' && x<rooms.length-1) x++;
+  if(e.key==='ArrowLeft' && y>0) y--;
+  if(e.key==='ArrowRight' && y<rooms[0].length-1) y++;
+  showRoom(x,y);
+});
+
+// Swipe gestures for mobile, locked until first puzzle solved
+let startX, startY;
+document.addEventListener('touchstart',e=>{
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+});
+document.addEventListener('touchend',e=>{
+  if(!firstPuzzleSolved) return;
+  let dx=e.changedTouches[0].clientX - startX;
+  let dy=e.changedTouches[0].clientY - startY;
+  if(Math.abs(dx)>Math.abs(dy)){
+    if(dx>30 && y>0) y--;
+    if(dx<-30 && y<rooms[0].length-1) y++;
+  } else {
+    if(dy>30 && x>0) x--;
+    if(dy<-30 && x<rooms.length-1) x++;
+  }
+  showRoom(x,y);
+});
+
 // Anonymous visitor
 let anon="Visitor-"+Math.floor(Math.random()*9999);
-document.getElementById("anon").innerText="You are "+anon;
 
 // First puzzle
 function checkPuzzle(){
   let a=document.getElementById("answer").value.toLowerCase().trim();
   if(a==="echo"){
-    document.getElementById("puzzle").style.display="none";
-    document.getElementById("main").style.display="block";
+    firstPuzzleSolved=true;      // unlock movement
+    showRoom(0,1);               // move to Library room
+    respond("Welcome to the Commons! Use arrow keys or swipe to explore rooms.");
   } else {
     alert("Wrong! Try again.");
   }
@@ -91,38 +140,59 @@ function checkPuzzle(){
 
 // Bulletin board
 function postMessage(){
-  let text=document.getElementById("postText").value.trim();
+  let text=document.getElementById("boardText").value.trim();
   if(text==="") return;
   let div=document.createElement("div");
   div.className="post";
   div.innerText=anon+": "+text;
   document.getElementById("board").prepend(div);
-  document.getElementById("postText").value="";
+  document.getElementById("boardText").value='';
 }
 
-// Chat
+// Interactive Chat
 function sendMessage(){
   let msg=document.getElementById("chatInput").value.trim();
   if(msg==="") return;
+  
+  let chatbox=document.getElementById("chatbox");
   let div=document.createElement("div");
   div.innerText=anon+": "+msg;
-  document.getElementById("chatbox").appendChild(div);
-  document.getElementById("chatInput").value="";
-  document.getElementById("chatbox").scrollTop=document.getElementById("chatbox").scrollHeight;
+  chatbox.appendChild(div);
+  
+  // Check for keyword triggers
+  msg = msg.toLowerCase();
+  if(msg.includes("hello") || msg.includes("hi")){
+    respond("Hello, " + anon + "! Welcome to the Commons.");
+  }
+  if(msg.includes("help")){
+    respond("Try moving with arrow keys or swipe gestures! Solve puzzles to unlock secret rooms.");
+  }
+  if(msg.includes("secret")){
+    respond("Maybe you should search for hidden rooms...");
+  }
+  if(msg.includes("towel")){
+    respond("Are you hinting at something? Maybe try the secret room!");
+  }
+  
+  document.getElementById("chatInput").value='';
+  chatbox.scrollTop=chatbox.scrollHeight;
+}
+
+// Chat automated responses
+function respond(text){
+  let chatbox=document.getElementById("chatbox");
+  let div=document.createElement("div");
+  div.innerText="The Commons: "+text;
+  div.style.color="#ffcc00";
+  chatbox.appendChild(div);
+  chatbox.scrollTop=chatbox.scrollHeight;
 }
 
 // Secret room
-function showSecret(){
-  document.getElementById("secret").style.display="block";
-}
-
 function unlockSecret(){
   let a=document.getElementById("secretAnswer").value.toLowerCase().trim();
-  if(a==="towel"){
-    document.getElementById("treasure").style.display="block";
-  } else {
-    alert("Wrong! Try again.");
-  }
+  if(a==="towel") document.getElementById("treasure").style.display='block';
+  else alert("Wrong! Try again.");
 }
 </script>
 
