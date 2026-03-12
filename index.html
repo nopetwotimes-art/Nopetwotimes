@@ -109,7 +109,7 @@ document.getElementById("id").innerText="You are "+anon
 
 // First puzzle
 document.getElementById("enterBtn").addEventListener("click", function(){
-  let a=document.getElementById("answer").value.toLowerCase()
+  let a=document.getElementById("answer").value.toLowerCase().trim()
   if(a==="echo"){
     document.getElementById("puzzle").style.display="none"
     document.getElementById("main").style.display="block"
@@ -146,7 +146,7 @@ document.getElementById("secretBtn").addEventListener("click", function(){
 })
 
 document.getElementById("unlockBtn").addEventListener("click", function(){
-  let answer=document.getElementById("secretAnswer").value.toLowerCase()
+  let answer=document.getElementById("secretAnswer").value.toLowerCase().trim()
   if(answer==="towel"){
     document.getElementById("treasure").style.display="block"
   } else {
