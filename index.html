@@ -55,6 +55,7 @@ button{
 
 <h1>THE COMMONS</h1>
 
+<!-- First puzzle -->
 <div id="puzzle">
   <p>Solve the riddle to enter:</p>
   <p>
@@ -64,9 +65,10 @@ button{
     But I come alive with wind
   </p>
   <input id="answer">
-  <button onclick="check()">Enter</button>
+  <button id="enterBtn">Enter</button>
 </div>
 
+<!-- Main area -->
 <div id="main">
   <audio autoplay loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2b8d6d63.mp3">
@@ -76,75 +78,83 @@ button{
 
   <h2>Bulletin Board</h2>
   <textarea id="postText"></textarea><br>
-  <button onclick="post()">Post</button>
+  <button id="postBtn">Post</button>
   <div id="board"></div>
 
   <h2>Chat</h2>
   <div id="chatbox"></div>
   <input id="chatInput">
-  <button onclick="send()">Send</button>
+  <button id="chatBtn">Send</button>
 
   <br><br>
-  <button onclick="secret()">Search for hidden room</button>
+  <button id="secretBtn">Search for hidden room</button>
 </div>
 
+<!-- Secret room -->
 <div id="secret">
   <h2>Secret Room</h2>
   <p>Solve this:</p>
   <p>What gets wetter the more it dries?</p>
   <input id="secretAnswer">
-  <button onclick="unlock()">Unlock</button>
-  <div id="treasure" style="display:none">
-    <p>Welcome deeper into the Commons.</p>
+  <button id="unlockBtn">Unlock</button>
+  <div id="treasure" style="display:none; margin-top:10px;">
+    <p>🎉 Congratulations! Welcome deeper into the Commons.</p>
   </div>
 </div>
 
 <script>
-// anonymous id
+// Anonymous visitor ID
 let anon="Visitor-"+Math.floor(Math.random()*9999)
 document.getElementById("id").innerText="You are "+anon
 
-// puzzle gate
-function check(){
+// First puzzle
+document.getElementById("enterBtn").addEventListener("click", function(){
   let a=document.getElementById("answer").value.toLowerCase()
-  if(a=="echo"){
+  if(a==="echo"){
     document.getElementById("puzzle").style.display="none"
     document.getElementById("main").style.display="block"
+  } else {
+    alert("Not quite, try again!")
   }
-}
+});
 
-// bulletin board
-function post(){
+// Bulletin board
+document.getElementById("postBtn").addEventListener("click", function(){
   let text=document.getElementById("postText").value
+  if(text==="") return
   let div=document.createElement("div")
   div.className="post"
   div.innerText=anon+": "+text
   document.getElementById("board").prepend(div)
   document.getElementById("postText").value=""
-}
+})
 
-// chat
-function send(){
+// Chat
+document.getElementById("chatBtn").addEventListener("click", function(){
   let msg=document.getElementById("chatInput").value
+  if(msg==="") return
   let div=document.createElement("div")
   div.innerText=anon+": "+msg
   document.getElementById("chatbox").appendChild(div)
   document.getElementById("chatInput").value=""
-}
+  document.getElementById("chatbox").scrollTop=document.getElementById("chatbox").scrollHeight
+})
 
-// secret room
-function secret(){
+// Secret room
+document.getElementById("secretBtn").addEventListener("click", function(){
   document.getElementById("secret").style.display="block"
-}
+})
 
-function unlock(){
-  let a=document.getElementById("secretAnswer").value.toLowerCase()
-  if(a=="towel"){
+document.getElementById("unlockBtn").addEventListener("click", function(){
+  let answer=document.getElementById("secretAnswer").value.toLowerCase()
+  if(answer==="towel"){
     document.getElementById("treasure").style.display="block"
+  } else {
+    alert("Not correct! Try again.")
   }
-}
+})
 
-// star background
+// Star background
 let canvas=document.getElementById("stars")
 let ctx=canvas.getContext("2d")
 canvas.width=window.innerWidth
@@ -161,7 +171,7 @@ function draw(){
     ctx.fillStyle="#00ffcc"
     ctx.fill()
     s.y+=0.2
-    if(s.y>canvas.height)s.y=0
+    if(s.y>canvas.height) s.y=0
   }
   requestAnimationFrame(draw)
 }
