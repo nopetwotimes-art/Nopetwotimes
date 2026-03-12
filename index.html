@@ -1,5 +1,502 @@
-
 <!DOCTYPE html>
+<html>
+<head>
+<title>The Commons</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ffcc;
+font-family:monospace;
+text-align:center;
+overflow:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+#main{display:none;}
+#secret{display:none;}
+
+textarea,input{
+width:80%;
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+margin:5px;
+}
+
+button{
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+padding:6px;
+margin:5px;
+cursor:pointer;
+}
+
+.post{
+border:1px solid #00ffcc;
+margin:10px;
+padding:10px;
+}
+
+#chatbox{
+height:150px;
+overflow-y:scroll;
+border:1px solid #00ffcc;
+margin:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<h1>THE COMMONS</h1>
+
+<div id="puzzle">
+
+<p>Solve the riddle to enter:</p>
+
+<p>
+I speak without a mouth  
+I hear without ears  
+I have no body  
+But I come alive with wind  
+</p>
+
+<input id="answer">
+<button onclick="check()">Enter</button>
+
+</div>
+
+<div id="main">
+
+<audio autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2b8d6d63.mp3">
+</audio>
+
+<h3 id="id"></h3>
+
+<h2>Bulletin Board</h2>
+
+<textarea id="postText"></textarea><br>
+<button onclick="post()">Post</button>
+
+<div id="board"></div>
+
+<h2>Chat</h2>
+
+<div id="chatbox"></div>
+
+<input id="chatInput">
+<button onclick="send()">Send</button>
+
+<br><br>
+
+<button onclick="secret()">Search for hidden room</button>
+
+</div>
+
+<div id="secret">
+
+<h2>Secret Room</h2>
+
+<p>Solve this:</p>
+
+<p>What gets wetter the more it dries?</p>
+
+<input id="secretAnswer">
+<button onclick="unlock()">Unlock</button>
+
+<div id="treasure" style="display:none">
+<p>Welcome deeper into the Commons.</p>
+</div>
+
+</div>
+
+<script>
+
+// anonymous id
+
+let anon="Visitor-"+Math.floor(Math.random()*9999)
+
+document.getElementById("id").innerText="You are "+anon
+
+// puzzle gate
+
+function check(){
+
+let a=document.getElementById("answer").value.toLowerCase()
+
+if(a=="echo"){
+
+document.getElementById("puzzle").style.display="none"
+document.getElementById("main").style.display="block"
+
+}
+
+}
+
+// bulletin board
+
+function post(){
+
+let text=document.getElementById("postText").value
+
+let div=document.createElement("div")
+
+div.className="post"
+
+div.innerText=anon+": "+text
+
+document.getElementById("board").prepend(div)
+
+document.getElementById("postText").value=""
+
+}
+
+// chat
+
+function send(){
+
+let msg=document.getElementById("chatInput").value
+
+let div=document.createElement("div")
+
+div.innerText=anon+": "+msg
+
+document.getElementById("chatbox").appendChild(div)
+
+document.getElementById("chatInput").value=""
+
+}
+
+// secret room
+
+function secret(){
+
+document.getElementById("secret").style.display="block"
+
+}
+
+function unlock(){
+
+let a=document.getElementById("secretAnswer").value.toLowerCase()
+
+if(a=="towel"){
+
+document.getElementById("treasure").style.display="block"
+
+}
+
+}
+
+// star background
+
+let canvas=document.getElementById("stars")
+let ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let stars=[]
+
+for(let i=0;i<120;i++){
+
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2
+})
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+for(let s of stars){
+
+ctx.beginPath()
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2)
+ctx.fillStyle="#00ffcc"
+ctx.fill()
+
+s.y+=0.2
+
+if(s.y>canvas.height)s.y=0
+
+}
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+<title>The Commons</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ffcc;
+font-family:monospace;
+text-align:center;
+overflow:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+#main{display:none;}
+#secret{display:none;}
+
+textarea,input{
+width:80%;
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+margin:5px;
+}
+
+button{
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+padding:6px;
+margin:5px;
+cursor:pointer;
+}
+
+.post{
+border:1px solid #00ffcc;
+margin:10px;
+padding:10px;
+}
+
+#chatbox{
+height:150px;
+overflow-y:scroll;
+border:1px solid #00ffcc;
+margin:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<h1>THE COMMONS</h1>
+
+<div id="puzzle">
+
+<p>Solve the riddle to enter:</p>
+
+<p>
+I speak without a mouth  
+I hear without ears  
+I have no body  
+But I come alive with wind  
+</p>
+
+<input id="answer">
+<button onclick="check()">Enter</button>
+
+</div>
+
+<div id="main">
+
+<audio autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2b8d6d63.mp3">
+</audio>
+
+<h3 id="id"></h3>
+
+<h2>Bulletin Board</h2>
+
+<textarea id="postText"></textarea><br>
+<button onclick="post()">Post</button>
+
+<div id="board"></div>
+
+<h2>Chat</h2>
+
+<div id="chatbox"></div>
+
+<input id="chatInput">
+<button onclick="send()">Send</button>
+
+<br><br>
+
+<button onclick="secret()">Search for hidden room</button>
+
+</div>
+
+<div id="secret">
+
+<h2>Secret Room</h2>
+
+<p>Solve this:</p>
+
+<p>What gets wetter the more it dries?</p>
+
+<input id="secretAnswer">
+<button onclick="unlock()">Unlock</button>
+
+<div id="treasure" style="display:none">
+<p>Welcome deeper into the Commons.</p>
+</div>
+
+</div>
+
+<script>
+
+// anonymous id
+
+let anon="Visitor-"+Math.floor(Math.random()*9999)
+
+document.getElementById("id").innerText="You are "+anon
+
+// puzzle gate
+
+function check(){
+
+let a=document.getElementById("answer").value.toLowerCase()
+
+if(a=="echo"){
+
+document.getElementById("puzzle").style.display="none"
+document.getElementById("main").style.display="block"
+
+}
+
+}
+
+// bulletin board
+
+function post(){
+
+let text=document.getElementById("postText").value
+
+let div=document.createElement("div")
+
+div.className="post"
+
+div.innerText=anon+": "+text
+
+document.getElementById("board").prepend(div)
+
+document.getElementById("postText").value=""
+
+}
+
+// chat
+
+function send(){
+
+let msg=document.getElementById("chatInput").value
+
+let div=document.createElement("div")
+
+div.innerText=anon+": "+msg
+
+document.getElementById("chatbox").appendChild(div)
+
+document.getElementById("chatInput").value=""
+
+}
+
+// secret room
+
+function secret(){
+
+document.getElementById("secret").style.display="block"
+
+}
+
+function unlock(){
+
+let a=document.getElementById("secretAnswer").value.toLowerCase()
+
+if(a=="towel"){
+
+document.getElementById("treasure").style.display="block"
+
+}
+
+}
+
+// star background
+
+let canvas=document.getElementById("stars")
+let ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let stars=[]
+
+for(let i=0;i<120;i++){
+
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2
+})
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+for(let s of stars){
+
+ctx.beginPath()
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2)
+ctx.fillStyle="#00ffcc"
+ctx.fill()
+
+s.y+=0.2
+
+if(s.y>canvas.height)s.y=0
+
+}
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
 <html>
 <head>
 <title>The Commons</title>
