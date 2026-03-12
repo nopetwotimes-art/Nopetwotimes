@@ -1,61 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>The Commons</title>
-
+<title>The Commons - Simple Version</title>
 <style>
 body{
-  margin:0;
+  margin:20px;
   background:black;
   color:#00ffcc;
   font-family:monospace;
   text-align:center;
-  overflow:hidden;
 }
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:-1;
-}
-#main{display:none;}
-#secret{display:none;}
-textarea,input{
-  width:80%;
+input, button, textarea{
+  margin:5px;
+  padding:5px;
   background:black;
   color:#00ffcc;
   border:1px solid #00ffcc;
-  margin:5px;
 }
-button{
-  background:black;
-  color:#00ffcc;
-  border:1px solid #00ffcc;
-  padding:6px;
-  margin:5px;
-  cursor:pointer;
-}
-.post{
-  border:1px solid #00ffcc;
-  margin:10px;
-  padding:10px;
-}
+#main, #secret, #treasure{display:none;}
 #chatbox{
-  height:150px;
+  height:100px;
   overflow-y:scroll;
   border:1px solid #00ffcc;
   margin:10px;
 }
+.post{border:1px solid #00ffcc; margin:5px; padding:5px;}
 </style>
 </head>
-
 <body>
 
-<canvas id="stars"></canvas>
+<h1>THE COMMONS (Simple Version)</h1>
 
-<h1>THE COMMONS</h1>
-
-<!-- First puzzle -->
+<!-- First Puzzle -->
 <div id="puzzle">
   <p>Solve the riddle to enter:</p>
   <p>
@@ -65,117 +41,89 @@ button{
     But I come alive with wind
   </p>
   <input id="answer">
-  <button id="enterBtn">Enter</button>
+  <button onclick="checkPuzzle()">Enter</button>
 </div>
 
-<!-- Main area -->
+<!-- Main Area -->
 <div id="main">
-  <audio autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2b8d6d63.mp3">
-  </audio>
-
-  <h3 id="id"></h3>
+  <h3 id="anon"></h3>
 
   <h2>Bulletin Board</h2>
   <textarea id="postText"></textarea><br>
-  <button id="postBtn">Post</button>
+  <button onclick="postMessage()">Post</button>
   <div id="board"></div>
 
   <h2>Chat</h2>
   <div id="chatbox"></div>
   <input id="chatInput">
-  <button id="chatBtn">Send</button>
+  <button onclick="sendMessage()">Send</button>
 
   <br><br>
-  <button id="secretBtn">Search for hidden room</button>
+  <button onclick="showSecret()">Search for hidden room</button>
 </div>
 
-<!-- Secret room -->
+<!-- Secret Room -->
 <div id="secret">
   <h2>Secret Room</h2>
-  <p>Solve this:</p>
   <p>What gets wetter the more it dries?</p>
   <input id="secretAnswer">
-  <button id="unlockBtn">Unlock</button>
-  <div id="treasure" style="display:none; margin-top:10px;">
-    <p>🎉 Congratulations! Welcome deeper into the Commons.</p>
+  <button onclick="unlockSecret()">Unlock</button>
+  <div id="treasure">
+    <p>🎉 Congratulations! You found the secret.</p>
   </div>
 </div>
 
 <script>
-// Anonymous visitor ID
-let anon="Visitor-"+Math.floor(Math.random()*9999)
-document.getElementById("id").innerText="You are "+anon
+// Anonymous visitor
+let anon="Visitor-"+Math.floor(Math.random()*9999);
+document.getElementById("anon").innerText="You are "+anon;
 
 // First puzzle
-document.getElementById("enterBtn").addEventListener("click", function(){
-  let a=document.getElementById("answer").value.toLowerCase().trim()
+function checkPuzzle(){
+  let a=document.getElementById("answer").value.toLowerCase().trim();
   if(a==="echo"){
-    document.getElementById("puzzle").style.display="none"
-    document.getElementById("main").style.display="block"
+    document.getElementById("puzzle").style.display="none";
+    document.getElementById("main").style.display="block";
   } else {
-    alert("Not quite, try again!")
+    alert("Wrong! Try again.");
   }
-});
+}
 
 // Bulletin board
-document.getElementById("postBtn").addEventListener("click", function(){
-  let text=document.getElementById("postText").value
-  if(text==="") return
-  let div=document.createElement("div")
-  div.className="post"
-  div.innerText=anon+": "+text
-  document.getElementById("board").prepend(div)
-  document.getElementById("postText").value=""
-})
+function postMessage(){
+  let text=document.getElementById("postText").value.trim();
+  if(text==="") return;
+  let div=document.createElement("div");
+  div.className="post";
+  div.innerText=anon+": "+text;
+  document.getElementById("board").prepend(div);
+  document.getElementById("postText").value="";
+}
 
 // Chat
-document.getElementById("chatBtn").addEventListener("click", function(){
-  let msg=document.getElementById("chatInput").value
-  if(msg==="") return
-  let div=document.createElement("div")
-  div.innerText=anon+": "+msg
-  document.getElementById("chatbox").appendChild(div)
-  document.getElementById("chatInput").value=""
-  document.getElementById("chatbox").scrollTop=document.getElementById("chatbox").scrollHeight
-})
+function sendMessage(){
+  let msg=document.getElementById("chatInput").value.trim();
+  if(msg==="") return;
+  let div=document.createElement("div");
+  div.innerText=anon+": "+msg;
+  document.getElementById("chatbox").appendChild(div);
+  document.getElementById("chatInput").value="";
+  document.getElementById("chatbox").scrollTop=document.getElementById("chatbox").scrollHeight;
+}
 
 // Secret room
-document.getElementById("secretBtn").addEventListener("click", function(){
-  document.getElementById("secret").style.display="block"
-})
+function showSecret(){
+  document.getElementById("secret").style.display="block";
+}
 
-document.getElementById("unlockBtn").addEventListener("click", function(){
-  let answer=document.getElementById("secretAnswer").value.toLowerCase().trim()
-  if(answer==="towel"){
-    document.getElementById("treasure").style.display="block"
+function unlockSecret(){
+  let a=document.getElementById("secretAnswer").value.toLowerCase().trim();
+  if(a==="towel"){
+    document.getElementById("treasure").style.display="block";
   } else {
-    alert("Not correct! Try again.")
+    alert("Wrong! Try again.");
   }
-})
-
-// Star background
-let canvas=document.getElementById("stars")
-let ctx=canvas.getContext("2d")
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-let stars=[]
-for(let i=0;i<120;i++){
-  stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2})
 }
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height)
-  for(let s of stars){
-    ctx.beginPath()
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2)
-    ctx.fillStyle="#00ffcc"
-    ctx.fill()
-    s.y+=0.2
-    if(s.y>canvas.height) s.y=0
-  }
-  requestAnimationFrame(draw)
-}
-draw()
 </script>
 
 </body>
